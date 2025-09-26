@@ -1,0 +1,4 @@
+[ 2025-09-26 17:13:43,376 ] 25 root - INFO - NetworkDataExtract object created 
+[ 2025-09-26 17:13:43,376 ] 31 root - INFO - Reading CSV file from: Network_Data\phisingData.csv 
+[ 2025-09-26 17:13:43,582 ] 36 root - INFO - Converted 11055 records from CSV to JSON 
+[ 2025-09-26 17:13:43,582 ] 43 root - INFO - Connecting to MongoDB database: Tanuja, collection: NetworkData 
