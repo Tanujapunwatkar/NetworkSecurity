@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/tanuj/OneDrive/Desktop/NetworkSecurity/mlruns/0/2872aa5008774e9f93c5998456e09898/artifacts
+end_time: 1759835340626
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2872aa5008774e9f93c5998456e09898
+run_name: Random Forest
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1759835340526
+status: 4
+tags: []
+user_id: tanuj

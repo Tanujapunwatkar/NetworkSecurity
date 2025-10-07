@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/tanuj/OneDrive/Desktop/NetworkSecurity/mlruns/0/models/m-8bbd7dae21774f009c48a7cfdff59a9f/artifacts
+creation_timestamp: 1759835666442
+experiment_id: '0'
+last_updated_timestamp: 1759835678496
+model_id: m-8bbd7dae21774f009c48a7cfdff59a9f
+model_type: null
+name: model
+source_run_id: 4f517316e12a4ef6946fc3d343943fc6
+status: 2
+status_message: null
