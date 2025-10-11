@@ -18,13 +18,6 @@ from networksecurity.utils.ml_utils.model.estimator import NetworkModel
 from networksecurity.utils.main_utils.utils import save_object, load_object, load_numpy_array_data, evaluate_models
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
 
-import dagshub
-
-dagshub.init(
-    repo_owner='Tanujapunwatkar',
-    repo_name='NetworkSecurity',
-    mlflow=True, 
-)
 
 class ModelTrainer:
     def __init__(self, model_trainer_config: ModelTrainerConfig, data_transformation_artifact: DataTransformationArtifact):
@@ -35,7 +28,7 @@ class ModelTrainer:
             raise NetworkSecurityException(e, sys)
 
     def track_mlflow(self, best_model, classification_metric, model_name: str):
-        """Logs metrics and saves model locally (DagsHub-safe)"""
+        """Logs metrics and saves model locally (no DagsHub)"""
         try:
             with mlflow.start_run(run_name=model_name):
                 mlflow.log_param("model_name", model_name)
@@ -50,7 +43,7 @@ class ModelTrainer:
                 if hasattr(classification_metric, "accuracy"):
                     mlflow.log_metric("accuracy", classification_metric.accuracy)
 
-                # Save model locally (avoiding unsupported DagsHub endpoint)
+                # Save model locally
                 model_save_path = os.path.join("artifacts", model_name)
                 os.makedirs(model_save_path, exist_ok=True)
                 mlflow.sklearn.save_model(best_model, path=model_save_path)
@@ -97,12 +90,12 @@ class ModelTrainer:
 
             logging.info(f"Best Model Found: {best_model_name} with score {best_model_score}")
 
-            # Train and evaluate the best model
+            # Train the best model
             best_model.fit(X_train, y_train)
             y_train_pred = best_model.predict(X_train)
             classification_train_metric = get_classification_score(y_true=y_train, y_pred=y_train_pred)
 
-            # Track metrics and save model locally
+            # Track metrics and save locally
             self.track_mlflow(best_model, classification_train_metric, model_name=best_model_name)
 
             y_test_pred = best_model.predict(X_test)
@@ -118,7 +111,6 @@ class ModelTrainer:
             save_object(self.model_trainer_config.trained_model_file_path, obj=final_model)
             save_object("final_model/model.pkl", best_model)
 
-            # Create artifact
             model_trainer_artifact = ModelTrainerArtifact(
                 trained_model_file_path=self.model_trainer_config.trained_model_file_path,
                 train_metric_artifacts=classification_train_metric,
@@ -137,7 +129,6 @@ class ModelTrainer:
             train_file_path = self.data_transformation_artifact.transformed_train_file_path
             test_file_path = self.data_transformation_artifact.transformed_test_file_path
 
-            # Load transformed numpy arrays
             train_arr = load_numpy_array_data(train_file_path)
             test_arr = load_numpy_array_data(test_file_path)
 
