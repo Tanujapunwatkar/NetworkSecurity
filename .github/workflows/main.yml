@@ -23,16 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # Install Render CLI correctly
-      - name: Install Render CLI
-        run: |
-          curl -L https://install.render.com | bash
-          echo "$HOME/.render/bin" >> $GITHUB_PATH
-
-      # Login to Render
-      - name: Login to Render
-        run: ~/.render/bin/render login --api-key ${{ secrets.RENDER_API_KEY }}
-
-      # Deploy your NetworkSecurity service
-      - name: Deploy Service
-        run: ~/.render/bin/render deploy service --id "srv-d3ksuld6ubrc738s2o00"
+      # Deploy using Render GitHub Action
+      - name: Deploy to Render
+        uses: render-examples/render-deploy-action@v1
+        with:
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          service_id: srv-d3ksuld6ubrc738s2o00
