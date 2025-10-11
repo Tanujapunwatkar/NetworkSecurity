@@ -23,7 +23,6 @@ import dagshub
 dagshub.init(
     repo_owner='Tanujapunwatkar',
     repo_name='NetworkSecurity',
-    token=os.getenv("DAGSHUB_TOKEN"),
     mlflow=True, 
 )
 
