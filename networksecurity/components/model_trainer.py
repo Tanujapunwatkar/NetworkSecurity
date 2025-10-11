@@ -19,13 +19,11 @@ from networksecurity.utils.main_utils.utils import save_object, load_object, loa
 from networksecurity.utils.ml_utils.metric.classification_metric import get_classification_score
 
 import dagshub
-DAGSHUB_TOKEN = os.getenv("DAGSHUB_TOKEN")
 
 dagshub.init(
     repo_owner='Tanujapunwatkar',
     repo_name='NetworkSecurity',
-    mlflow=True,
-    token=DAGSHUB_TOKEN  # Pass the token here
+    mlflow=True, 
 )
 
 class ModelTrainer:
