@@ -1,4 +1,4 @@
-name: workflow
+name: Deploy to Render
 
 on:
   push:
@@ -8,120 +8,42 @@ on:
       - 'README.md'
 
 jobs:
-  # ==========================================
-  # 🧪 Continuous Integration
-  # ==========================================
-  integration:
-    name: Continuous Integration
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Lint code
-        run: echo "Linting repository"
-
-      - name: Run unit tests
-        run: echo "Running unit tests"
-
-  # ==========================================
-  # 🐳 Continuous Delivery (Build + Push Image)
-  # ==========================================
-  build-and-push-ecr-image:
-    name: Continuous Delivery
-    needs: integration
+  build-and-deploy:
+    name: Build and Deploy to Render
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      # Step 1: Checkout the latest code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Utilities
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq unzip
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      # Step 2: Set up Python (optional, but helps lint/test before deploy)
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          python-version: '3.12'
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      # Step 3: Install dependencies and verify build
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          echo "✅ Dependencies installed successfully!"
 
-      # 🧩 Debug Step to confirm ECR values
-      - name: Debug ECR Environment
+      # Step 4: Build Docker image for Render
+      - name: Build Docker image
+        run: |
+          docker build -t networksecurity-app .
+
+      # Step 5: Test Docker container build
+        # Optional: Uncomment to test locally before pushing
+        # run: docker run --rm networksecurity-app python -m unittest discover
+
+      # Step 6: Trigger Render Deployment using Deploy Hook
+      - name: Trigger Render Deployment
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: latest
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          echo "ECR_REGISTRY = $ECR_REGISTRY"
-          echo "ECR_REPOSITORY = $ECR_REPOSITORY"
-          echo "IMAGE_TAG = $IMAGE_TAG"
-
-      - name: Build, Tag, and Push Docker Image to ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
-          IMAGE_TAG: latest
-        run: |
-          echo "Building Docker image..."
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          echo "Pushing image to ECR..."
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-  # ==========================================
-  # 🚀 Continuous Deployment (on EC2 self-hosted runner)
-  # ==========================================
-  Continuous-Deployment:
-    name: Continuous Deployment
-    needs: build-and-push-ecr-image
-    runs-on: self-hosted
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Pull Latest Docker Image
-        run: |
-          echo "Pulling latest image..."
-          docker pull ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-
-      - name: Stop Old Container (if running)
-        run: |
-          if [ "$(docker ps -q -f name=networksecurity)" ]; then
-            echo "Stopping existing container..."
-            docker stop networksecurity
-            docker rm -fv networksecurity
-          fi
-
-      - name: Run New Docker Container
-        run: |
-          echo "Starting new container..."
-          docker run -d -p 8000:8000 --ipc="host" --name=networksecurity \
-          -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
-          -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
-          -e AWS_REGION=${{ secrets.AWS_REGION }} \
-          ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
-
-      - name: Clean Unused Docker Resources
-        run: |
-          echo "Cleaning up old images and containers..."
-          docker system prune -f
+          echo "🚀 Triggering Render deployment..."
+          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
+          echo "✅ Render deployment triggered successfully!"
