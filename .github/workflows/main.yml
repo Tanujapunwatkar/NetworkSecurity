@@ -1,31 +1,26 @@
-name: Deploy NetworkSecurity to Render
+name: CI for NetworkSecurity
 
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
 
 jobs:
   integration:
     name: Continuous Integration
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Lint code
-        run: echo "Linting repository"
-      - name: Run unit tests
-        run: echo "Running unit tests"
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-  deploy-to-render:
-    name: Deploy to Render
-    needs: integration
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+      - name: Lint Code
+        run: |
+          echo "Linting repository"
+          # Example: pip install flake8 && flake8 .
 
-      # Deploy using Render GitHub Action
-      - name: Deploy to Render
-        uses: render-examples/render-deploy-action@v1
-        with:
-          api_key: ${{ secrets.RENDER_API_KEY }}
-          service_id: srv-d3ksuld6ubrc738s2o00
+      - name: Run Unit Tests
+        run: |
+          echo "Running unit tests"
+          # Example: pip install pytest && pytest
