@@ -26,26 +26,25 @@ https://networksecurity-owcs.onrender.com
 
 ## 🏗️ Project Structure
 
-.github
-Network_Data
-__pycache__
-data_schema
-final_model
-networksecurity
-prediction_output
-templates
-valid_data
-.gitignore
-Dockerfile
-README.md
-app.py
-main.py
-push_data.py
-requirements.txt
-setup.py
-test_mongodb.py
+- .github
+- Network_Data
+- __pycache__
+- data_schema
+- final_model
+- networksecurity
+- prediction_output
+- templates
+- valid_data
+- Dockerfile
+- README.md
+- app.py
+- main.py
+- push_data.py
+- requirements.txt
+- setup.py
+- test_mongodb.py
 
-Author
-Tanuja Punwatkar
+### Author
+#### Tanuja Punwatkar
 🎓 B.Tech – Computer Science & Engineering
 🔗 GitHub
