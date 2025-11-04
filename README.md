@@ -1,8 +1,11 @@
 # 🛡️ Phishing Website Detection (Network Security Project)
 
-A **machine learning-based web app** to detect **phishing websites**, built with **FastAPI** and deployed on **Render**.
+## 📘 Overview
+This project focuses on detecting **phishing websites** using **machine learning** and **network security data**.  
+It is a complete end-to-end system — from **data validation and model training** to **FastAPI deployment** on **Render**.
 
----
+Phishing is one of the most common cyber threats today.  
+This system helps detect potentially malicious URLs automatically based on various extracted features.
 
 ## 🚀 Live Demo
 https://networksecurity-owcs.onrender.com
@@ -47,4 +50,3 @@ https://networksecurity-owcs.onrender.com
 ### Author
 #### Tanuja Punwatkar
 🎓 B.Tech – Computer Science & Engineering
-🔗 GitHub
