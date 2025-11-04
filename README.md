@@ -47,6 +47,16 @@ https://networksecurity-owcs.onrender.com
 - setup.py
 - test_mongodb.py
 
+### 📊 Results
+
+Achieved ~95% accuracy on test data.
+
+Successfully deployed for real-time phishing detection using FastAPI.
+
+### 📦 Deployment
+
+Deployed on Render — accessible online for testing API endpoints.
+
 ### Author
 #### Tanuja Punwatkar
 🎓 B.Tech – Computer Science & Engineering
