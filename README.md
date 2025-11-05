@@ -2,7 +2,7 @@
 
 ## 📘 Overview
 This project focuses on detecting **phishing websites** using **machine learning** and **network security data**.  
-It is a complete end-to-end system — from **data validation and model training** to **FastAPI deployment** on **Render**.
+It is a complete end-to-end system — from **ETL Pipeline** to **FastAPI deployment** on **Render**.
 
 Phishing is one of the most common cyber threats today.  
 This system helps detect potentially malicious URLs automatically based on various extracted features.
